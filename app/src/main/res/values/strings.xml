@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Biblioteca Cientec</string>
+    <string name="button_login">Entrar</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Senha</string>
+    <string name="button_cancel">Cancelar</string>
+    <string name="logo_cientec">Logo Cientec</string>
+</resources>
