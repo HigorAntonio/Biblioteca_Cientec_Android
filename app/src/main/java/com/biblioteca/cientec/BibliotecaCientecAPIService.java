@@ -12,7 +12,14 @@ public interface BibliotecaCientecAPIService {
 
     @FormUrlEncoded
     @POST("auth/authenticate")
-    Call<String> postAuthentication(@Field("email") String email, @Field("password") String password);
+    Call<String> postAuthentication(@Field("email") String email,
+                                    @Field("password") String password);
+
+    @FormUrlEncoded
+    @POST("auth/register")
+    Call<String> postRegister(@Field("name") String name,
+                              @Field("email") String email,
+                              @Field("password") String password);
 
     @GET("projects")
     Call<String> getProjects(@Header("Authorization") String authorization);

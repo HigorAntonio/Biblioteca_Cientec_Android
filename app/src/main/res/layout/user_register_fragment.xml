@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient_2"
-    tools:context=".fragments.LoginFragment">
+    tools:context=".fragments.UserRegisterFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -18,57 +18,65 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="Entrar"
+            android:text="Criar conta"
             android:textColor="#fff"
             android:textSize="34sp"
             android:layout_marginBottom="40dp"/>
 
+        <EditText
+            android:id="@+id/nome_text_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/custon_edit_text"
+            android:hint="Nome"
+            android:padding="10dp"
+            android:inputType="text"
+            android:layout_marginBottom="20dp"/>
 
         <EditText
             android:id="@+id/email_text_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/hint_email"
-            android:inputType="textEmailAddress"
             android:background="@drawable/custon_edit_text"
+            android:hint="Email"
             android:padding="10dp"
+            android:inputType="textEmailAddress"
             android:layout_marginBottom="20dp"/>
 
         <EditText
             android:id="@+id/password_text_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/hint_password"
-            android:inputType="textPassword"
             android:background="@drawable/custon_edit_text"
-            android:padding="10dp"/>
+            android:hint="Senha"
+            android:padding="10dp"
+            android:inputType="textPassword"/>
 
 
-        <!-- Snippet from "Add buttons" section goes here. -->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <Button
-                android:id="@+id/login_button"
+                android:id="@+id/avancar_button2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
-                android:text="@string/button_login"
-                android:background="@drawable/primary_button_ripple"
-                android:layout_marginBottom="20dp"
-                android:textColor="#fff"
+                android:layout_gravity="center_horizontal"
+                android:text="Avançar"
+                android:background="@drawable/gray_button_ripple"
+                android:textColor="#000"
                 android:layout_marginTop="20dp"/>
 
             <Button
-                android:id="@+id/cancel_button"
+                android:id="@+id/cancel_button2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="12dp"
                 android:layout_marginRight="12dp"
-                android:layout_toStartOf="@id/login_button"
-                android:layout_toLeftOf="@id/login_button"
+                android:layout_toStartOf="@id/avancar_button2"
+                android:layout_toLeftOf="@id/avancar_button2"
                 android:text="@string/button_cancel"
                 android:background="@drawable/secondary_button_ripple"
                 android:layout_marginBottom="20dp"
@@ -77,4 +85,5 @@
         </RelativeLayout>
 
     </LinearLayout>
+
 </ScrollView>
