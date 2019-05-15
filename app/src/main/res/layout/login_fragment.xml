@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/gradient_2"
     tools:context=".fragments.LoginFragment">
 
@@ -23,58 +23,76 @@
             android:textSize="34sp"
             android:layout_marginBottom="40dp"/>
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="E-mail"
+            android:textColor="#fff"
+            android:textSize="16sp"/>
 
-        <EditText
+        <android.support.design.widget.TextInputLayout
             android:id="@+id/email_text_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/hint_email"
-            android:inputType="textEmailAddress"
-            android:background="@drawable/custon_edit_text"
-            android:padding="10dp"
-            android:layout_marginBottom="20dp"/>
+            app:errorEnabled="true"
+            app:errorTextAppearance="@style/error_appearance">
 
-        <EditText
-            android:id="@+id/password_text_input"
+            <android.support.design.widget.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"
+                android:background="@drawable/custon_edit_text"
+                android:padding="10dp"
+                android:layout_marginBottom="10dp"/>
+
+        </android.support.design.widget.TextInputLayout>
+
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/hint_password"
-            android:inputType="textPassword"
-            android:background="@drawable/custon_edit_text"
-            android:padding="10dp"/>
+            android:text="Senha"
+            android:textColor="#fff"
+            android:textSize="16sp"/>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/password_text_input2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:errorEnabled="true"
+            app:passwordToggleEnabled="true"
+            app:errorTextAppearance="@style/error_appearance"
+            android:layout_marginBottom="30dp">
+
+            <android.support.design.widget.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:background="@drawable/custon_edit_text"
+                android:padding="10dp"/>
+
+        </android.support.design.widget.TextInputLayout>
 
 
         <!-- Snippet from "Add buttons" section goes here. -->
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="60dp">
 
             <Button
                 android:id="@+id/login_button"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:text="@string/button_login"
-                android:background="@drawable/primary_button_ripple"
-                android:layout_marginBottom="20dp"
-                android:textColor="#fff"
-                android:layout_marginTop="20dp"/>
+                android:gravity="center"
+                android:layout_gravity="center_horizontal"
+                android:text="Entrar"
+                android:background="@drawable/gray_button_ripple"
+                android:textColor="#000"
+                android:layout_marginTop="20dp"
+                android:enabled="false"/>
 
-            <Button
-                android:id="@+id/cancel_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="12dp"
-                android:layout_marginRight="12dp"
-                android:layout_toStartOf="@id/login_button"
-                android:layout_toLeftOf="@id/login_button"
-                android:text="@string/button_cancel"
-                android:background="@drawable/secondary_button_ripple"
-                android:layout_marginBottom="20dp"
-                android:layout_marginTop="20dp"/>
-
-        </RelativeLayout>
+        </LinearLayout>
 
     </LinearLayout>
 </ScrollView>

@@ -2,8 +2,11 @@ package com.biblioteca.cientec.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,31 +31,34 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 
 public class LoginFragment extends BaseFragment {
-    private EditText emailInput;
-    private EditText passwordInput;
+    private TextInputLayout edtEmail;
+    private TextInputLayout edtPassword;
     private Button nextButton;
-    private Button cancelButton;
     private User user = new User();
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.login_fragment, container, false);
 
-        emailInput = (EditText) view.findViewById(R.id.email_text_input);
-        passwordInput = (EditText) view.findViewById(R.id.password_text_input);
-        nextButton = (Button) view.findViewById(R.id.login_button);
-        cancelButton = (Button) view.findViewById(R.id.cancel_button);
+        edtEmail = view.findViewById(R.id.email_text_input);
+        edtPassword = view.findViewById(R.id.password_text_input2);
+        nextButton = view.findViewById(R.id.login_button);
+
+        edtEmail.getEditText().addTextChangedListener(loginTextWatcher);
+        edtPassword.getEditText().addTextChangedListener(loginTextWatcher);
 
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                nextButton.setEnabled(false);
+
                 Retrofit retrofit = new Retrofit.Builder()
                         .addConverterFactory(ScalarsConverterFactory.create())
                         .baseUrl(BibliotecaCientecAPIService.BASE_URL)
                         .build();
 
                 BibliotecaCientecAPIService service = retrofit.create(BibliotecaCientecAPIService.class);
-                Call<String> stringCall = service.postAuthentication(emailInput.getText().toString(), passwordInput.getText().toString());
+                Call<String> stringCall = service.postAuthentication(edtEmail.getEditText().getText().toString(), edtPassword.getEditText().getText().toString());
                 stringCall.enqueue(new Callback<String>() {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
@@ -79,6 +85,7 @@ public class LoginFragment extends BaseFragment {
                                     Intent it = new Intent(getContext(), HomeActivity.class);
                                     it.putExtra("user", user);
                                     startActivity(it);
+                                    getActivity().finish();
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -86,23 +93,65 @@ public class LoginFragment extends BaseFragment {
                         } else {
                             Toast.makeText(getActivity().getApplicationContext(),"Usuário ou senha invalido",Toast.LENGTH_SHORT).show();
                         }
+                        nextButton.setEnabled(true);
                     }
 
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
-
+                        nextButton.setEnabled(true);
                     }
                 });
             }
         });
 
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getFragmentManager().popBackStack();
-            }
-        });
-
         return view;
     }
+
+    private boolean validateEmail(boolean print) {
+        String emailInput = edtEmail.getEditText().getText().toString().trim();
+
+        if (emailInput.isEmpty()) {
+            if (print)
+                edtEmail.setError("O campo Email não pode ficar vazio");
+            return false;
+        } else {
+            if (print)
+                edtEmail.setError(null);
+            return true;
+        }
+    }
+
+    private boolean validatePassword(boolean print) {
+        String passwordInput = edtPassword.getEditText().getText().toString().trim();
+
+        if (passwordInput.isEmpty()) {
+            if (print)
+                edtPassword.setError("O campo Senha não pode ficar vazio");
+            return false;
+        } else {
+            if (print)
+                edtPassword.setError(null);
+            return true;
+        }
+    }
+
+    private TextWatcher loginTextWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            boolean emailValido = validateEmail(false);
+            boolean passwordValido = validatePassword(false);
+            nextButton.setEnabled(emailValido && passwordValido);
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+    };
+
 }

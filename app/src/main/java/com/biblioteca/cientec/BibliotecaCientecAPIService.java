@@ -8,7 +8,8 @@ import retrofit2.http.Header;
 import retrofit2.http.POST;
 
 public interface BibliotecaCientecAPIService {
-    public static final String BASE_URL = "http://10.0.2.2:3000/";
+    //public static final String BASE_URL = "http://10.0.2.2:3000/"; // Executa com API no servidor local
+    public static final String BASE_URL = "https://bbt-cientec-api.herokuapp.com"; // Executa com API no servidor remoto
 
     @FormUrlEncoded
     @POST("auth/authenticate")

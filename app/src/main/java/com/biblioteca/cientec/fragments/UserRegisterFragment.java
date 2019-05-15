@@ -2,14 +2,14 @@ package com.biblioteca.cientec.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
+import android.support.design.widget.TextInputLayout;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.biblioteca.cientec.BibliotecaCientecAPIService;
@@ -27,32 +27,29 @@ import retrofit2.Retrofit;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class UserRegisterFragment extends BaseFragment {
-    private EditText edtNome;
-    private EditText edtEmail;
-    private EditText edtSenha;
+    private TextInputLayout edtNome;
+    private TextInputLayout edtEmail;
+    private TextInputLayout edtSenha;
     private Button btnAvancar;
-    private Button btnCancelar;
     private User user = new User();
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.user_register_fragment, container, false);
 
-        edtNome = (EditText) view.findViewById(R.id.nome_text_input);
-        edtEmail = (EditText) view.findViewById(R.id.email_text_input);
-        edtSenha = (EditText) view.findViewById(R.id.password_text_input);
-        btnAvancar = (Button) view.findViewById(R.id.avancar_button2);
-        btnCancelar = (Button) view.findViewById(R.id.cancel_button2);
+        edtNome =  view.findViewById(R.id.nome_text_input);
+        edtEmail =  view.findViewById(R.id.email_text_input);
+        edtSenha =  view.findViewById(R.id.password_text_input);
+        btnAvancar = view.findViewById(R.id.avancar_button2);
+
+        edtNome.getEditText().addTextChangedListener(nameTextWatcher);
+        edtEmail.getEditText().addTextChangedListener(emailTextWatcher);
+        edtSenha.getEditText().addTextChangedListener(passwordTextWatcher);
 
         btnAvancar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(edtNome.getText().toString().equals("") ||
-                    edtEmail.getText().toString().equals("") ||
-                        edtSenha.getText().toString().equals("")) {
-                    Toast.makeText(getActivity().getApplicationContext(),"Preencha todos os campos",Toast.LENGTH_SHORT).show();
-                    return;
-                }
+                btnAvancar.setEnabled(false);
 
                 Retrofit retrofit = new Retrofit.Builder()
                         .addConverterFactory(ScalarsConverterFactory.create())
@@ -60,8 +57,8 @@ public class UserRegisterFragment extends BaseFragment {
                         .build();
 
                 BibliotecaCientecAPIService service = retrofit.create(BibliotecaCientecAPIService.class);
-                Call<String> stringCall = service.postRegister(edtNome.getText().toString(),
-                        edtEmail.getText().toString(), edtSenha.getText().toString());
+                Call<String> stringCall = service.postRegister(edtNome.getEditText().getText().toString(),
+                        edtEmail.getEditText().getText().toString(), edtSenha.getEditText().getText().toString());
                 stringCall.enqueue(new Callback<String>() {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
@@ -88,6 +85,7 @@ public class UserRegisterFragment extends BaseFragment {
                                     Intent it = new Intent(getContext(), HomeActivity.class);
                                     it.putExtra("user", user);
                                     startActivity(it);
+                                    getActivity().finish();
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -95,23 +93,134 @@ public class UserRegisterFragment extends BaseFragment {
                         } else {
                             Toast.makeText(getActivity().getApplicationContext(),"Usuário existente",Toast.LENGTH_SHORT).show();
                         }
+                        btnAvancar.setEnabled(true);
                     }
 
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
+                        btnAvancar.setEnabled(true);
                         Toast.makeText(getActivity().getApplicationContext(),"Não foi possível completar o cadastro",Toast.LENGTH_SHORT).show();
                     }
                 });
             }
         });
 
-        btnCancelar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getFragmentManager().popBackStack();
-            }
-        });
-
         return view;
     }
+
+    private boolean validateName(boolean print) {
+        String nameInput = edtNome.getEditText().getText().toString().trim();
+
+        if (nameInput.isEmpty()) {
+            if (print)
+                edtNome.setError("O campo Nome não pode ficar vazio");
+            return false;
+        } else {
+            if (print)
+                edtNome.setError(null);
+            return true;
+        }
+    }
+
+    private boolean validateEmail(boolean print) {
+        String emailInput = edtEmail.getEditText().getText().toString().trim();
+        String regex = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
+        if (emailInput.isEmpty()) {
+            if (print)
+                edtEmail.setError("O campo Email não pode ficar vazio");
+            return false;
+        }else if (!emailInput.matches(regex)) {
+             if (print)
+                    edtEmail.setError("Esse email é inválido. Ele deveria ter um formato assim: exemplo@email.com.");
+            return false;
+        } else {
+            if (print)
+                edtEmail.setError(null);
+            return true;
+        }
+    }
+
+    private boolean validatePassword(boolean print) {
+        String passwordInput = edtSenha.getEditText().getText().toString().trim();
+
+        if (passwordInput.isEmpty()) {
+            if (print)
+                edtSenha.setError("O campo Senha não pode ficar vazio");
+            return false;
+        } else {
+            if (print)
+                edtSenha.setError(null);
+            return true;
+        }
+    }
+
+    public boolean confirmInput() {
+        return validateName(true) && validateEmail(true) && validatePassword(true);
+    }
+
+    private TextWatcher nameTextWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            String nameInput = edtNome.getEditText().getText().toString().trim();
+            String emailInput = edtEmail.getEditText().getText().toString().trim();
+            String passwordInput = edtSenha.getEditText().getText().toString().trim();
+
+            validateName(true);
+            btnAvancar.setEnabled(validateName(false) && validateEmail(false) && validatePassword(false));
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+    };
+
+    private TextWatcher emailTextWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            String nameInput = edtNome.getEditText().getText().toString().trim();
+            String emailInput = edtEmail.getEditText().getText().toString().trim();
+            String passwordInput = edtSenha.getEditText().getText().toString().trim();
+
+            validateEmail(true);
+            btnAvancar.setEnabled(validateName(false) && validateEmail(false) && validatePassword(false));
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+    };
+
+    private TextWatcher passwordTextWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            String nameInput = edtNome.getEditText().getText().toString().trim();
+            String emailInput = edtEmail.getEditText().getText().toString().trim();
+            String passwordInput = edtSenha.getEditText().getText().toString().trim();
+
+            validatePassword(true);
+            btnAvancar.setEnabled(validateName(false) && validateEmail(false) && validatePassword(false));
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+    };
 }
