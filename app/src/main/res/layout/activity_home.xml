@@ -13,8 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-
-        <include layout="@layout/toolbar_include"/>
+        <include layout="@layout/include_toolbar" />
 
         <LinearLayout
             android:id="@+id/containerHome"
@@ -30,7 +29,7 @@
         android:id="@+id/navigation_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:menu="@menu/menu_nav_drawer"
+        app:menu="@menu/nav_menu"
         android:layout_gravity="start"></android.support.design.widget.NavigationView>
 
 </android.support.v4.widget.DrawerLayout>

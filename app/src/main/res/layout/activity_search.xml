@@ -6,5 +6,5 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".activity.SearchActivity">
-    <include layout="@layout/toolbar_include"/>
+    <include layout="@layout/include_toolbar"/>
 </LinearLayout>

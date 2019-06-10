@@ -1,7 +1,6 @@
 package com.biblioteca.cientec;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -51,18 +50,10 @@ public class BookRecyclerViewAdapter extends RecyclerView.Adapter<BookRecyclerVi
         viewHolder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Toast.makeText(mContext, mNames.get(position), Toast.LENGTH_SHORT).show();
                 AppCompatActivity activity = (AppCompatActivity) v.getContext();
                 Fragment myFragment = new BookFragment();
-                Bundle params = new Bundle();
-                params.putString("book_name", mNames.get(position));
-                params.putString("image_url", mImageUrls.get(position));
-                myFragment.setArguments(params);
-                activity.getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.containerHome, myFragment)
-                        .addToBackStack(null)
-                        .commit();
+                activity.getSupportFragmentManager().beginTransaction().replace(R.id.containerHome, myFragment).addToBackStack(null).commit();
+
             }
         });
     }
