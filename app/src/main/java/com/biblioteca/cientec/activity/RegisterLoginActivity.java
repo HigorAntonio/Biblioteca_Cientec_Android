@@ -8,7 +8,7 @@ import com.biblioteca.cientec.R;
 import com.biblioteca.cientec.fragments.LoginFragment;
 import com.biblioteca.cientec.fragments.RegisterOrLoginFragment;
 
-public class RegisterLoginActivity extends BaseActivity {
+public class RegisterLoginActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

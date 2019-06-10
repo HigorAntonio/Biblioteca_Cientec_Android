@@ -16,7 +16,7 @@ public class RegisterOrLoginFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.register_or_login_fragment, container, false);
+        View view = inflater.inflate(R.layout.fragment_register_or_login, container, false);
 
         btnInscrever = (Button) view.findViewById(R.id.inscrever);
         btnEntrar = (Button) view.findViewById(R.id.entrar);

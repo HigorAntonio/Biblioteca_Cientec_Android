@@ -35,7 +35,7 @@ public class UserRegisterFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.user_register_fragment, container, false);
+        View view = inflater.inflate(R.layout.fragment_user_register, container, false);
 
         edtNome =  view.findViewById(R.id.nome_text_input);
         edtEmail =  view.findViewById(R.id.email_text_input);
