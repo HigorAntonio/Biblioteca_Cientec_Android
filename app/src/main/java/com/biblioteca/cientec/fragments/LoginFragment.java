@@ -1,5 +1,7 @@
 package com.biblioteca.cientec.fragments;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
@@ -28,10 +30,14 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 
 public class LoginFragment extends BaseFragment {
+
+    private Context context;
     private TextInputLayout edtEmail;
     private TextInputLayout edtPassword;
     private Button nextButton;
     private User user = new User();
+    private ProgressDialog dialog;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -48,6 +54,11 @@ public class LoginFragment extends BaseFragment {
             @Override
             public void onClick(View view) {
                 nextButton.setEnabled(false);
+
+                dialog = new ProgressDialog(context);
+                dialog.setTitle("");
+                dialog.setMessage("Entrando...");
+                dialog.show();
 
                 Retrofit retrofit = new Retrofit.Builder()
                         .addConverterFactory(ScalarsConverterFactory.create())
@@ -90,11 +101,13 @@ public class LoginFragment extends BaseFragment {
                         } else {
                             Toast.makeText(getActivity().getApplicationContext(),"Usuário ou senha invalido",Toast.LENGTH_SHORT).show();
                         }
+                        dialog.dismiss();
                         nextButton.setEnabled(true);
                     }
 
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
+                        dialog.dismiss();
                         nextButton.setEnabled(true);
                     }
                 });
@@ -102,6 +115,12 @@ public class LoginFragment extends BaseFragment {
         });
 
         return view;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        this.context = context;
+        super.onAttach(context);
     }
 
     private boolean validateEmail(boolean print) {

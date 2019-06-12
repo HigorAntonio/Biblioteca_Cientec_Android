@@ -3,6 +3,7 @@ package com.biblioteca.cientec.fragments;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +16,7 @@ import com.biblioteca.cientec.BibliotecaCientecAPIService;
 import com.biblioteca.cientec.Models.User;
 import com.biblioteca.cientec.R;
 import com.biblioteca.cientec.BookRecyclerViewAdapter;
+import com.biblioteca.cientec.activity.HomeActivity;
 
 import java.util.ArrayList;
 
@@ -37,7 +39,13 @@ public class HomeFragment extends BaseFragment {
         Intent it = getActivity().getIntent();
         User user = (User) it.getSerializableExtra("user");
 
-        getImages();
+        //Troca a seta de voltar pelo menu hamburguer da Navigation Drawer
+        ActionBarDrawerToggle mToggle = ((HomeActivity)getActivity()).getmToggle();
+        mToggle.setDrawerIndicatorEnabled(true);
+
+        if (mNames.isEmpty()) {
+            getImages();
+        }
         RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
         initRecyclerView(recyclerView);
         RecyclerView recyclerView1 = view.findViewById(R.id.recyclerView1);
