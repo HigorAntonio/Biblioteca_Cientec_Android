@@ -25,7 +25,8 @@
                 android:layout_height="162dp"
                 android:scaleType="centerCrop"
                 android:layout_centerHorizontal="true"
-                android:src="@drawable/ic_launcher_background"/>
+                android:src="@drawable/ic_launcher_background"
+                android:transitionName="myImage"/>
 
             <TextView
                 android:id="@+id/book_name"
