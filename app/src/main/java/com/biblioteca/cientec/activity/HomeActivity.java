@@ -1,9 +1,12 @@
 package com.biblioteca.cientec.activity;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -15,11 +18,13 @@ import android.widget.Toast;
 import com.biblioteca.cientec.Models.User;
 import com.biblioteca.cientec.R;
 import com.biblioteca.cientec.fragments.HomeFragment;
+import com.biblioteca.cientec.fragments.NewBookFragment;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class HomeActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+    private Intent it;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
     private CircleImageView profileImage;
@@ -30,7 +35,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        Intent it = getIntent();
+        it = getIntent();
         user = (User) it.getSerializableExtra("user");
 
         setUpToolbar();
@@ -69,7 +74,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         return true;
     }
 
-
+    //Toolbar
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -86,16 +91,48 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         return super.onOptionsItemSelected(item);
     }
 
+    //Navigation Drawer
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         int id = menuItem.getItemId();
         if (id == R.id.home) {
-            //Toast.makeText(getBaseContext(), "home", Toast.LENGTH_SHORT).show();
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.containerHome, new HomeFragment())
-                    .commit();
-            onBackPressed();
+            //O código do bloco if/else a seguir
+            //verifica se existe um HomeFragment na backstack, se existir, abre o fragment existente;
+            //se não existir cria um novo fragment e navega até ele
+            Fragment fragment = getSupportFragmentManager().findFragmentByTag("HomeFragment");
+            if (fragment == null) {
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.containerHome, new HomeFragment(), "HomeFragment")
+                        .addToBackStack("HomeFragment")
+                        .commit();
+            } else {
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.containerHome, fragment, "HomeFragment")
+                        .addToBackStack("HomeFragment")
+                        .commit();
+            }
+            onBackPressed(); //Recolhe a navDrawer se estiver aberta
+        } else if (id == R.id.new_book) {
+            //O código do bloco if/else a seguir
+            //verifica se existe um NewBookFragment na backstack, se existir, abre o fragment existente;
+            //se não existir cria um novo fragment e navega até ele
+            Fragment fragment = getSupportFragmentManager().findFragmentByTag("NewBookFragment");
+            if (fragment == null) {
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.containerHome, new NewBookFragment(), "NewBookFragment")
+                        .addToBackStack("NewBookFragment")
+                        .commit();
+            } else {
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.containerHome, fragment, "NewBookFragment")
+                        .addToBackStack("HomeFragment")
+                        .commit();
+            }
+            onBackPressed();//Recolhe a navDrawer se estiver aberta
         } else if (id == R.id.setting) {
             Toast.makeText(getBaseContext(), "setting", Toast.LENGTH_SHORT).show();
         }else if (id == R.id.log) {
@@ -107,8 +144,29 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
 
     public void onBackPressed() {
         DrawerLayout layout = (DrawerLayout)findViewById(R.id.drawer_layout);
-        if (layout.isDrawerOpen(GravityCompat.START)) {
+        closeKeyboard();
+
+        Fragment fr = getSupportFragmentManager().findFragmentByTag("NewBookFragment");
+
+        if (layout.isDrawerOpen(GravityCompat.START)) { //Recolhe a navDrawer se estiver aberta
             layout.closeDrawer(GravityCompat.START);
+        } else if (fr != null && fr.isVisible()) {
+            //Se o usuário estiver na tela de cadastro de livros (NewBookFragment) e pressionar
+            //o botão de voltar o app deve voltar para o início (HomeFragment)
+            Fragment fragment = getSupportFragmentManager().findFragmentByTag("HomeFragment");
+            if (fragment == null) {
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.containerHome, new HomeFragment(), "HomeFragment")
+                        .addToBackStack("HomeFragment")
+                        .commit();
+            } else {
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.containerHome, fragment, "HomeFragment")
+                        .addToBackStack("HomeFragment")
+                        .commit();
+            }
         } else {
             super.onBackPressed();
         }

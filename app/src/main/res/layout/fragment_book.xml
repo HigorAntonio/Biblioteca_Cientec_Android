@@ -185,9 +185,10 @@
                 android:textColor="#000"
                 android:layout_marginBottom="20dp"/>
             <TextView
+                android:id="@+id/fr_book_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+                android:text="Descrição não disponível"
                 android:ellipsize="end"
                 android:maxLines="4"
                 android:layout_marginBottom="30dp"
@@ -269,24 +270,77 @@
             android:padding="20dp"
             android:background="@drawable/border_fragment_book">
             <TextView
+                android:id="@+id/fr_book_txt_avaliacao"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Avaliar este livro"
                 android:textColor="#000"
                 android:textStyle="bold"/>
             <TextView
+                android:id="@+id/fr_book_sub_txt_avaliacao"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Dê sua opinião"
                 android:layout_marginBottom="20dp"/>
             <android.support.v7.widget.AppCompatRatingBar
+                android:id="@+id/fr_book_review_rating"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:numStars="5"
-                android:rating="0"
-                android:stepSize="1"/>
+                android:rating="0.0"
+                android:stepSize="1.0"/>
+
+            <LinearLayout
+                android:id="@+id/fr_book_my_rating"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="20dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/fr_book_comment_profile_image"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/user_picture2"
+                        android:layout_marginRight="20dp"/>
+                    <TextView
+                        android:id="@+id/fr_book_my_username"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Username"
+                        android:layout_gravity="center_vertical"
+                        android:textColor="#000"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="20dp">
+                    <android.support.v7.widget.AppCompatRatingBar
+                        android:id="@+id/fr_book_my_comment_rating"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="?android:attr/ratingBarStyleSmall"
+                        android:layout_marginRight="10dp"/>
+                    <TextView
+                        android:id="@+id/fr_book_data_rating"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="dd/mm/aaaa"/>
+                </LinearLayout>
+                <TextView
+                    android:id="@+id/fr_book_my_comment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+                    android:ellipsize="end"
+                    android:maxLines="4"/>
+            </LinearLayout>
+
             <TextView
+                android:id="@+id/fr_book_new_review"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="ESCREVA UMA RESENHA"

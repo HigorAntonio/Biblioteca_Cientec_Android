@@ -2,5 +2,7 @@
 <resources>
     <color name="colorPrimary">#0152a4</color>
     <color name="colorPrimaryDark">#002b74</color>
-    <color name="colorAccent">#efe81b</color>
+    <!--Esse amarelo não contrasta com o branco de algumas telas
+    <color name="colorAccent">#efe81b</color>-->
+    <color name="colorAccent">#94990b</color>
 </resources>

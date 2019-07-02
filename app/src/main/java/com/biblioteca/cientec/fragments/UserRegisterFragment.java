@@ -31,6 +31,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 public class UserRegisterFragment extends BaseFragment {
 
     private Context context;
+    private Intent it;
     private TextInputLayout edtNome;
     private TextInputLayout edtEmail;
     private TextInputLayout edtSenha;
@@ -55,6 +56,7 @@ public class UserRegisterFragment extends BaseFragment {
         btnAvancar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                closeKeyboard();
                 btnAvancar.setEnabled(false);
 
                 dialog = new ProgressDialog(context);
@@ -93,7 +95,7 @@ public class UserRegisterFragment extends BaseFragment {
 
                                 if (user.getToken() != null) {
                                     getFragmentManager().popBackStack();
-                                    Intent it = new Intent(getContext(), HomeActivity.class);
+                                    it = new Intent(getContext(), HomeActivity.class);
                                     it.putExtra("user", user);
                                     startActivity(it);
                                     getActivity().finish();

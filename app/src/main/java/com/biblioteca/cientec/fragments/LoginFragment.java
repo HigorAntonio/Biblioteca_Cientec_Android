@@ -32,6 +32,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 public class LoginFragment extends BaseFragment {
 
     private Context context;
+    private Intent it;
     private TextInputLayout edtEmail;
     private TextInputLayout edtPassword;
     private Button nextButton;
@@ -53,6 +54,7 @@ public class LoginFragment extends BaseFragment {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                closeKeyboard();
                 nextButton.setEnabled(false);
 
                 dialog = new ProgressDialog(context);
@@ -66,7 +68,10 @@ public class LoginFragment extends BaseFragment {
                         .build();
 
                 BibliotecaCientecAPIService service = retrofit.create(BibliotecaCientecAPIService.class);
-                Call<String> stringCall = service.postAuthentication(edtEmail.getEditText().getText().toString(), edtPassword.getEditText().getText().toString());
+                Call<String> stringCall = service.postAuthentication(
+                        edtEmail.getEditText().getText().toString(),
+                        edtPassword.getEditText().getText().toString()
+                );
                 stringCall.enqueue(new Callback<String>() {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
@@ -90,7 +95,7 @@ public class LoginFragment extends BaseFragment {
 
                                 if (user.getToken() != null) {
                                     getFragmentManager().popBackStack();
-                                    Intent it = new Intent(getContext(), HomeActivity.class);
+                                    it = new Intent(getContext(), HomeActivity.class);
                                     it.putExtra("user", user);
                                     startActivity(it);
                                     getActivity().finish();
@@ -108,6 +113,7 @@ public class LoginFragment extends BaseFragment {
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
                         dialog.dismiss();
+                        Toast.makeText(getActivity().getApplicationContext(),"Não foi possível efetuar o login",Toast.LENGTH_SHORT).show();
                         nextButton.setEnabled(true);
                     }
                 });

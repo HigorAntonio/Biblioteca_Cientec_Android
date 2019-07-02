@@ -3,6 +3,9 @@
     <item android:id="@+id/home"
         android:title="Início"
         android:icon="@drawable/home_icon"/>
+    <item android:id="@+id/new_book"
+        android:title="Cadastrar Livro"
+        android:icon="@drawable/add_box_icon"/>
     <item android:id="@+id/setting"
         android:title="Configurações"
         android:icon="@drawable/settings_icon"/>

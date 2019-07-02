@@ -7,16 +7,23 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.biblioteca.cientec.BibliotecaCientecAPIService;
+import com.biblioteca.cientec.Models.Author;
+import com.biblioteca.cientec.Models.Book;
 import com.biblioteca.cientec.Models.User;
 import com.biblioteca.cientec.R;
 import com.biblioteca.cientec.BookRecyclerViewAdapter;
 import com.biblioteca.cientec.activity.HomeActivity;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -28,22 +35,31 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class HomeFragment extends BaseFragment {
 
+    private View view;
     private Context context;
+    private Intent it;
+    private ArrayList<Book> mBooks = new ArrayList<>();
+    private ArrayList<Author> mAuthors = new ArrayList<>();
     private ArrayList<String> mNames = new ArrayList<>();
     private ArrayList<String> mImageUrls = new ArrayList<>();
+    private User user;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
-        Intent it = getActivity().getIntent();
-        User user = (User) it.getSerializableExtra("user");
+        view = inflater.inflate(R.layout.fragment_home, container, false);
+        it = getActivity().getIntent();
+        user = (User) it.getSerializableExtra("user");
+
+        //Volta o título e o subtítulo da Actionbar para seus valores iniciais
+        ((HomeActivity)getActivity()).getSupportActionBar().setTitle(R.string.app_name);
+        ((HomeActivity)getActivity()).getSupportActionBar().setSubtitle("");
 
         //Troca a seta de voltar pelo menu hamburguer da Navigation Drawer
         ActionBarDrawerToggle mToggle = ((HomeActivity)getActivity()).getmToggle();
         mToggle.setDrawerIndicatorEnabled(true);
 
-        if (mNames.isEmpty()) {
+        /*if (mNames.isEmpty()) {
             getImages();
         }
         RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
@@ -57,7 +73,7 @@ public class HomeFragment extends BaseFragment {
         RecyclerView recyclerView4 = view.findViewById(R.id.recyclerView4);
         initRecyclerView(recyclerView4);
         RecyclerView recyclerView5 = view.findViewById(R.id.recyclerView5);
-        initRecyclerView(recyclerView5);
+        initRecyclerView(recyclerView5);*/
 
         CardView cardViewCategory0 = view.findViewById(R.id.cardView_category0);
         cardViewCategory0.setOnClickListener(new View.OnClickListener() {
@@ -73,23 +89,73 @@ public class HomeFragment extends BaseFragment {
                 .build();
 
         BibliotecaCientecAPIService service = retrofit.create(BibliotecaCientecAPIService.class);
-        Call<String> stringCall = service.getProjects("Bearer "+user.getToken());
+        Call<String> stringCall = service.getBooks("Bearer "+user.getToken());
         stringCall.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 if (response.isSuccessful()) {
                     String responseString = response.body();
+                    Log.d("Author", "res: "+responseString);
+                    JSONArray root = null;
+                    try {
+                        root = new JSONArray(responseString);
+                        mBooks.clear();
+                        mAuthors.clear();
+                        for (int i = 0; i < root.length(); i++) {
+                            JSONObject jsonBook = root.getJSONObject(i);
+                            Book b = new Book();
+                            b.setId(jsonBook.optInt("bookId"));
+                            b.setIsbn(jsonBook.optString("isbn"));
+                            b.setTitle(jsonBook.optString("title"));
+                            b.setOriginalTile(jsonBook.optString("originalTitle"));
+                            b.setEdition(jsonBook.optInt("edition"));
+                            b.setPublisher(jsonBook.optString("publisher"));
+                            b.setCoverUrl(jsonBook.optString("coverUrl").replace("localhost", "10.0.2.2"));
+                            b.setCoverName(jsonBook.optString("coverName"));
+                            b.setDescription(jsonBook.optString("description"));
+                            b.setAuthorId(jsonBook.optString("authorId"));
+                            b.setNumberOfPages(jsonBook.optInt("numberOfPages"));
+                            b.setLanguage(jsonBook.optString("language"));
+                            mBooks.add(b);
+                            Author a = new Author();
+                            a.setId(jsonBook.optInt("authorId"));
+                            a.setName(jsonBook.optString("authorName"));
+                            a.setAbout(jsonBook.optString("authorAbout"));
+                            mAuthors.add(a);
+                            Log.d("Author", "id: "+a.getId()+" name: "+a.getName()+" about: "+a.getAbout());
+                        }
 
+                        RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
+                        initRecyclerView(recyclerView);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Toast.makeText(context,"Não foi possível carregar os dados",Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-
+                Toast.makeText(context,
+                        "Não foi possível carregar os dados. Verifique sua conexão",
+                        Toast.LENGTH_SHORT).show();
             }
         });
 
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        //Limpa a backstack caso o usuário use a navegação pelos fragments e
+        //retorne à tela inicial
+        getActivity()
+                .getSupportFragmentManager()
+                .popBackStack(null, getActivity().
+                        getSupportFragmentManager()
+                        .POP_BACK_STACK_INCLUSIVE);
     }
 
     @Override
@@ -143,7 +209,7 @@ public class HomeFragment extends BaseFragment {
     private void initRecyclerView(RecyclerView recyclerView) {
         LinearLayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
         recyclerView.setLayoutManager(layoutManager);
-        BookRecyclerViewAdapter adapter = new BookRecyclerViewAdapter(context, mNames, mImageUrls);
+        BookRecyclerViewAdapter adapter = new BookRecyclerViewAdapter(context, /*mNames, mImageUrls*/ mBooks, mAuthors, user);
         recyclerView.setAdapter(adapter);
     }
 }

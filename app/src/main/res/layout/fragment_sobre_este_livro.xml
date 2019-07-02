@@ -22,19 +22,10 @@
                 android:textStyle="bold"
                 android:layout_marginBottom="20dp"/>
             <TextView
+                android:id="@+id/fr_sobre_este_livro_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-                    nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis
-                    aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-                    nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
-                    officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-                    nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis
-                    aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-                    nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
-                    officia deserunt mollit anim id est laborum."
+                android:text="Descrição não disponível"
                 android:layout_marginBottom="40dp"/>
         </LinearLayout>
 
@@ -63,7 +54,17 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:text="Título Original"
+                        android:layout_marginBottom="20dp"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:text="Editora"
+                        android:layout_marginBottom="20dp"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="Edição"
                         android:layout_marginBottom="20dp"/>
                     <TextView
                         android:layout_width="match_parent"
@@ -78,7 +79,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="Linguagem"
+                        android:text="Idioma"
                         android:layout_marginBottom="20dp"/>
                     <TextView
                         android:layout_width="match_parent"
@@ -92,30 +93,49 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
                     <TextView
+                        android:id="@+id/fr_sobre_este_livro_original_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="Título Original"
+                        android:gravity="end"
+                        android:layout_marginBottom="20dp"/>
+                    <TextView
+                        android:id="@+id/fr_sobre_este_livro_publisher"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:text="Nome da editora"
                         android:gravity="end"
                         android:layout_marginBottom="20dp"/>
                     <TextView
+                        android:id="@+id/fr_sobre_este_livro_edition"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="edição"
+                        android:gravity="end"
+                        android:layout_marginBottom="20dp"/>
+                    <TextView
+                        android:id="@+id/fr_sobre_este_livro_num_pages"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:text="0"
                         android:gravity="end"
                         android:layout_marginBottom="20dp"/>
                     <TextView
+                        android:id="@+id/fr_sobre_este_livro_isbn"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:text="xxxxxxxxxxxxx"
                         android:gravity="end"
                         android:layout_marginBottom="20dp"/>
                     <TextView
+                        android:id="@+id/fr_sobre_este_livro_language"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:text="Português"
                         android:gravity="end"
                         android:layout_marginBottom="20dp"/>
                     <TextView
+                        android:id="@+id/fr_sobre_este_livro_genres"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:text="Gênero1 / Gênero2"
