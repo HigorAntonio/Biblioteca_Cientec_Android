@@ -38,6 +38,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -87,6 +89,14 @@ public class BookFragment extends BaseFragment {
     private TextView my_comment;
     private CircleImageView my_comment_profile_image;
     private String commentHTTPMethod;
+    private TextView txt_book_rating;
+    private TextView txt_book_num_pages;
+    private TextView txt_book_review_rating;
+    private TextView txt_book_num_reviews;
+    private TextView txt_book_reviews_num_reviews;
+    private RatingBar book_review_rating;
+    private double bookRating;
+    private int numReviews;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -116,6 +126,12 @@ public class BookFragment extends BaseFragment {
         txt_book_author = view.findViewById(R.id.fr_book_author);
         txt_book_publisher = view.findViewById(R.id.fr_book_publisher);
         txt_book_description = view.findViewById(R.id.fr_book_description);
+        txt_book_rating = view.findViewById(R.id.fr_book_book_rating);
+        txt_book_num_pages = view.findViewById(R.id.fr_book_num_pages);
+        txt_book_review_rating = view.findViewById(R.id.fr_book_book_review_rating);
+        txt_book_num_reviews = view.findViewById(R.id.fr_book_num_reviews);
+        txt_book_reviews_num_reviews = view.findViewById(R.id.fr_book_reviews_num_reviews);
+        book_review_rating = view.findViewById(R.id.fr_book_review_rating_bar);
 
         //Carrega o nome, imagem da capa e outras informações do livro correto
         // (recebidos do BookFragment) no layout
@@ -127,6 +143,7 @@ public class BookFragment extends BaseFragment {
         txt_book_author.setText(author.getName());
         txt_book_publisher.setText(book.getPublisher());
         txt_book_description.setText(book.getDescription());
+        txt_book_num_pages.setText(((Integer)book.getNumberOfPages()).toString());
 
         //Carrega os comentários da parte de "Avaliações e resenhas" no RecyclerView
         if (mUserNames.isEmpty()) {
@@ -193,6 +210,8 @@ public class BookFragment extends BaseFragment {
                 .build();
 
         BibliotecaCientecAPIService service = retrofit.create(BibliotecaCientecAPIService.class);
+        // Solicita os dados da avaliação do usuário para o livro selecionado e retorna os
+        //dados caso o usuário tenha feito uma avaliação
         Call<String> stringCall = service.getMyReview("Bearer "+user.getToken(),
                 book.getId());
         stringCall.enqueue(new Callback<String>() {
@@ -201,16 +220,17 @@ public class BookFragment extends BaseFragment {
                 if (response.isSuccessful()) {
                     String responseString = response.body();
                     Log.d("Review", "resposta: "+responseString);
-                    JSONArray root = null;
+                    JSONObject root = null;
                     myReview = new Review();
                     try {
-                        root = new JSONArray(responseString);
-                        JSONObject jsonReview = root.getJSONObject(0);
-                        myReview.setUserId(jsonReview.optInt("userId"));
-                        myReview.setBookId(jsonReview.optInt("bookId"));
-                        myReview.setRating(jsonReview.optInt("rating"));
-                        myReview.setReview(jsonReview.optString("review"));
-                        myReview.setUpdatedAt(jsonReview.optString("updatedAt"));
+                        root = new JSONObject(responseString);
+                        JSONArray jsonArrayUserReview = root.getJSONArray("userReview");
+                        JSONObject jsonUserReview = jsonArrayUserReview.getJSONObject(0);
+                        myReview.setUserId(jsonUserReview.optInt("userId"));
+                        myReview.setBookId(jsonUserReview.optInt("bookId"));
+                        myReview.setRating(jsonUserReview.optInt("rating"));
+                        myReview.setReview(jsonUserReview.optString("review"));
+                        myReview.setUpdatedAt(jsonUserReview.optString("updatedAt"));
                         Log.d("Review", "userId: "+myReview.getUserId() + " bookId: "+myReview.getBookId()+
                                 " review: "+myReview.getReview()+" rating: "+myReview.getRating()+
                                 "updatedAt: "+myReview.getUpdatedAt());
@@ -230,6 +250,18 @@ public class BookFragment extends BaseFragment {
                             txt_new_review.setText("EDITE SUA AVALIAÇÃO");
                             commentHTTPMethod = "put";
                         }
+
+                        JSONArray jsonArrayBookReviewStats = root.getJSONArray("stats");
+                        JSONObject jsonBookReviewStats = jsonArrayBookReviewStats.getJSONObject(0);
+                        bookRating = jsonBookReviewStats.getDouble("bookRating");
+                        numReviews = jsonBookReviewStats.getInt("numReviews");
+                        NumberFormat formatarFloat= new DecimalFormat("0.0");
+                        txt_book_rating.setText(formatarFloat.format(bookRating).replace(".", ","));
+                        txt_book_review_rating.setText(formatarFloat.format(bookRating).replace(".", ","));
+                        book_review_rating.setRating((float) bookRating);
+                        txt_book_num_reviews.setText(numReviews + " avaliações");
+                        txt_book_reviews_num_reviews.setText(((Integer)numReviews).toString());
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                         txt_avaliacao.setText("Avaliar este livro");

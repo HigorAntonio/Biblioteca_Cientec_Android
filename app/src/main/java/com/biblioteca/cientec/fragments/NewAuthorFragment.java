@@ -70,6 +70,7 @@ public class NewAuthorFragment extends BaseFragment {
         btn_cadastrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                closeKeyboard();
                 if (validaCadastro()) {
                     btn_cadastrar.setEnabled(false);
 
@@ -102,7 +103,6 @@ public class NewAuthorFragment extends BaseFragment {
                                     it.putExtra("newAuthorId", jsonAuthor.optInt("id"));
 
                                     Toast.makeText(getActivity().getApplicationContext(),"Autor cadastrado com sucesso",Toast.LENGTH_SHORT).show();
-                                    closeKeyboard();
                                     getActivity().onBackPressed();
                                 } catch (JSONException e) {
                                     e.printStackTrace();

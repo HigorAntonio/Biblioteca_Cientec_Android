@@ -125,6 +125,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal">
                         <TextView
+                            android:id="@+id/fr_book_book_rating"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="0,0"
@@ -138,6 +139,7 @@
                             android:layout_gravity="center_horizontal"/>
                     </LinearLayout>
                     <TextView
+                        android:id="@+id/fr_book_num_reviews"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="0 avaliações"
@@ -155,6 +157,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
                     <TextView
+                        android:id="@+id/fr_book_num_pages"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="0"
@@ -221,6 +224,7 @@
                 android:paddingHorizontal="20dp">
 
                 <TextView
+                    android:id="@+id/fr_book_book_review_rating"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0"
@@ -235,12 +239,14 @@
                     android:orientation="vertical">
 
                     <android.support.v7.widget.AppCompatRatingBar
+                        android:id="@+id/fr_book_review_rating_bar"
                         style="?android:attr/ratingBarStyleSmall"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:stepSize="0.1"/>
 
                     <TextView
+                        android:id="@+id/fr_book_reviews_num_reviews"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"

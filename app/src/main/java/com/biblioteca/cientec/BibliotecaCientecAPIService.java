@@ -12,8 +12,8 @@ import retrofit2.http.Part;
 import retrofit2.http.Path;
 
 public interface BibliotecaCientecAPIService {
-    public static final String BASE_URL = "http://10.0.2.2:3000/"; // Executa com API no servidor local
-    //public static final String BASE_URL = "https://bbt-cientec-api.herokuapp.com"; // Executa com API no servidor remoto
+    //public static final String BASE_URL = "http://10.0.2.2:3000/"; // Executa com API no servidor local
+    public static final String BASE_URL = "https://bbt-cientec-api.herokuapp.com"; // Executa com API no servidor remoto
 
     @FormUrlEncoded
     @POST("auth/register")
@@ -72,6 +72,13 @@ public interface BibliotecaCientecAPIService {
     @GET("books")
     Call<String> getBooks(@Header("Authorization") String authorization);
 
-    @GET("reviews/user/{bookId}")
+    @FormUrlEncoded
+    @POST("reviews")
+    Call<String> postNewReview(@Header("Authorization") String authorization,
+                               @Field("bookId") int bookId,
+                               @Field("review") String review,
+                               @Field("rating") int rating);
+
+    @GET("reviews/{bookId}")
     Call<String> getMyReview(@Header("Authorization") String authorization, @Path("bookId") int bookId);
 }
