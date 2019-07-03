@@ -2,12 +2,14 @@ package com.biblioteca.cientec;
 
 import okhttp3.MultipartBody;
 import retrofit2.Call;
+import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
 
@@ -72,6 +74,15 @@ public interface BibliotecaCientecAPIService {
     @GET("books")
     Call<String> getBooks(@Header("Authorization") String authorization);
 
+    @GET("books/recentes")
+    Call<String> getRecentBooks(@Header("Authorization") String authorization);
+
+    @GET("books/populares")
+    Call<String> getPopularBooks(@Header("Authorization") String authorization);
+
+    @GET("books/melhornota")
+    Call<String> getBestRatedBooks(@Header("Authorization") String authorization);
+
     @FormUrlEncoded
     @POST("reviews")
     Call<String> postNewReview(@Header("Authorization") String authorization,
@@ -79,6 +90,19 @@ public interface BibliotecaCientecAPIService {
                                @Field("review") String review,
                                @Field("rating") int rating);
 
+    @FormUrlEncoded
+    @PUT("reviews")
+    Call<String> putMyReview(@Header("Authorization") String authorization,
+                               @Field("bookId") int bookId,
+                               @Field("review") String review,
+                               @Field("rating") int rating);
+
     @GET("reviews/{bookId}")
     Call<String> getMyReview(@Header("Authorization") String authorization, @Path("bookId") int bookId);
+
+    @DELETE("reviews/{bookId}")
+    Call<String> deleteMyReview(@Header("Authorization") String authorization, @Path("bookId") int bookId);
+
+    @GET("bookGenre/{bookId}")
+    Call<String> getBookGenres(@Header("Authorization") String authorization, @Path("bookId") int bookId);
 }

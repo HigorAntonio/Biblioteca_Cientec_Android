@@ -37,13 +37,28 @@
 
         </android.support.design.widget.TextInputLayout>
 
-        <Button
-            android:id="@+id/fr_new_review_post"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/green_button_ripple"
-            android:text="Postar"
-            android:textColor="#fff"/>
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/fr_new_review_delete"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/red_button_ripple"
+                android:text="Excluir"
+                android:textColor="#fff"
+                android:layout_marginRight="20dp"/>
+            <Button
+                android:id="@+id/fr_new_review_post"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/green_button_ripple"
+                android:text="Postar"
+                android:textColor="#fff"/>
+        </LinearLayout>
 
     </LinearLayout>
 </ScrollView>

@@ -96,49 +96,49 @@
                         android:id="@+id/fr_sobre_este_livro_original_title"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="Título Original"
+                        android:text="Indisponível"
                         android:gravity="end"
                         android:layout_marginBottom="20dp"/>
                     <TextView
                         android:id="@+id/fr_sobre_este_livro_publisher"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="Nome da editora"
+                        android:text="Indisponível"
                         android:gravity="end"
                         android:layout_marginBottom="20dp"/>
                     <TextView
                         android:id="@+id/fr_sobre_este_livro_edition"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="edição"
+                        android:text="Indisponível"
                         android:gravity="end"
                         android:layout_marginBottom="20dp"/>
                     <TextView
                         android:id="@+id/fr_sobre_este_livro_num_pages"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="0"
+                        android:text="Indisponível"
                         android:gravity="end"
                         android:layout_marginBottom="20dp"/>
                     <TextView
                         android:id="@+id/fr_sobre_este_livro_isbn"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="xxxxxxxxxxxxx"
+                        android:text="Indisponível"
                         android:gravity="end"
                         android:layout_marginBottom="20dp"/>
                     <TextView
                         android:id="@+id/fr_sobre_este_livro_language"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="Português"
+                        android:text="Indisponível"
                         android:gravity="end"
                         android:layout_marginBottom="20dp"/>
                     <TextView
                         android:id="@+id/fr_sobre_este_livro_genres"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="Gênero1 / Gênero2"
+                        android:text="Indisponível"
                         android:gravity="end"
                         android:layout_marginBottom="20dp"/>
                 </LinearLayout>

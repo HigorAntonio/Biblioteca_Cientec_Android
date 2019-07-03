@@ -30,9 +30,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                     <TextView
+                        android:id="@+id/cardView_title_category0"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Livros"
+                        android:text="Adicionados Recentemente"
                         android:textColor="#000"
                         android:textSize="16sp"
                         android:textStyle="bold"
@@ -57,7 +58,7 @@
                 </RelativeLayout>
 
                 <android.support.v7.widget.RecyclerView
-                    android:id="@+id/recyclerView"
+                    android:id="@+id/recyclerView0"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="horizontal">
@@ -66,6 +67,7 @@
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
+            android:id="@+id/cardView_category1"
             android:layout_width="match_parent"
             android:layout_height="264dp"
             android:layout_margin="10dp"
@@ -84,9 +86,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                     <TextView
+                        android:id="@+id/cardView_title_category1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Livros"
+                        android:text="Mais Populares"
                         android:textColor="#000"
                         android:textSize="16sp"
                         android:textStyle="bold"
@@ -120,6 +123,7 @@
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
+            android:id="@+id/cardView_category2"
             android:layout_width="match_parent"
             android:layout_height="264dp"
             android:layout_margin="10dp"
@@ -138,9 +142,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                     <TextView
+                        android:id="@+id/cardView_title_category2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Livros"
+                        android:text="Melhores Avaliações"
                         android:textColor="#000"
                         android:textSize="16sp"
                         android:textStyle="bold"
@@ -173,7 +178,7 @@
             </LinearLayout>
         </android.support.v7.widget.CardView>
 
-        <android.support.v7.widget.CardView
+        <!--<android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="264dp"
             android:layout_margin="10dp"
@@ -333,7 +338,7 @@
                     android:orientation="horizontal">
                 </android.support.v7.widget.RecyclerView>
             </LinearLayout>
-        </android.support.v7.widget.CardView>
+        </android.support.v7.widget.CardView>-->
 
     </LinearLayout>
 </ScrollView>

@@ -40,6 +40,7 @@ import org.json.JSONObject;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -63,11 +64,14 @@ public class BookFragment extends BaseFragment {
 
     private ArrayList<String> mUserNames = new ArrayList<>();
     private ArrayList<String> mUserImageUrls = new ArrayList<>();
-    private ArrayList<Integer> mRatings = new ArrayList<>();
-    private ArrayList<String> mRatingDates = new ArrayList<>();
-    private ArrayList<String> mComments = new ArrayList<>();
+    //private ArrayList<Integer> mRatings = new ArrayList<>();
+    //private ArrayList<String> mRatingDates = new ArrayList<>();
+    //private ArrayList<String> mComments = new ArrayList<>();
+    private ArrayList<Review> mReviews = new ArrayList<>();
+    private RecyclerView commentsRecyclerView;
 
     private LinearLayout sobre_este_livro;
+    private LinearLayout all_reviews;
     private TextView txt_book_name;
     private ImageView book_image;
     private TextView txt_book_author;
@@ -86,7 +90,6 @@ public class BookFragment extends BaseFragment {
     private TextView my_comment_user_name;
     private RatingBar my_comment_rating;
     private TextView my_comment_date;
-    private TextView my_comment;
     private CircleImageView my_comment_profile_image;
     private String commentHTTPMethod;
     private TextView txt_book_rating;
@@ -104,7 +107,7 @@ public class BookFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_book, container, false);
 
         it = getActivity().getIntent();
-        final User user = (User) it.getSerializableExtra("user");
+        user = (User) it.getSerializableExtra("user");
 
         //Torna possível trocar o menu da ActionBar
         setHasOptionsMenu(true);
@@ -146,11 +149,7 @@ public class BookFragment extends BaseFragment {
         txt_book_num_pages.setText(((Integer)book.getNumberOfPages()).toString());
 
         //Carrega os comentários da parte de "Avaliações e resenhas" no RecyclerView
-        if (mUserNames.isEmpty()) {
-            getRatings();
-        }
-        RecyclerView recyclerView = view.findViewById(R.id.fr_book_recyclerView);
-        initRecyclerView(recyclerView);
+        commentsRecyclerView = view.findViewById(R.id.fr_book_recyclerView);
 
         //Preenche a data de devolução com o dia previsto para a entrega caso o
         //usuário pegue o livro emprestado
@@ -199,7 +198,6 @@ public class BookFragment extends BaseFragment {
         my_comment_user_name = view.findViewById(R.id.fr_book_my_username);
         my_comment_rating = view.findViewById(R.id.fr_book_my_comment_rating);
         my_comment_date = view.findViewById(R.id.fr_book_data_rating);
-        my_comment = view.findViewById(R.id.fr_book_my_comment);
         my_comment_profile_image = view.findViewById(R.id.fr_book_comment_profile_image);
         userRating = 0;
         commentHTTPMethod = "";
@@ -238,8 +236,10 @@ public class BookFragment extends BaseFragment {
 
                         my_comment_user_name.setText(user.getName());
                         my_comment_rating.setRating(myReview.getRating());
-                        my_comment_date.setText(myReview.getUpdatedAt());
-                        my_comment.setText(myReview.getReview());
+                        txt_my_comment.setText(myReview.getReview());
+                        my_comment_date.setText(formataData(myReview.getUpdatedAt()
+                                .substring(0, 10)
+                                .replace("-", "/")));
 
                         //Exibe a avaliação do usuário, caso exista uma, ou a ratingBar para o usuario avaliar o livro
                         if (!responseString.equals("[]")) {
@@ -250,18 +250,6 @@ public class BookFragment extends BaseFragment {
                             txt_new_review.setText("EDITE SUA AVALIAÇÃO");
                             commentHTTPMethod = "put";
                         }
-
-                        JSONArray jsonArrayBookReviewStats = root.getJSONArray("stats");
-                        JSONObject jsonBookReviewStats = jsonArrayBookReviewStats.getJSONObject(0);
-                        bookRating = jsonBookReviewStats.getDouble("bookRating");
-                        numReviews = jsonBookReviewStats.getInt("numReviews");
-                        NumberFormat formatarFloat= new DecimalFormat("0.0");
-                        txt_book_rating.setText(formatarFloat.format(bookRating).replace(".", ","));
-                        txt_book_review_rating.setText(formatarFloat.format(bookRating).replace(".", ","));
-                        book_review_rating.setRating((float) bookRating);
-                        txt_book_num_reviews.setText(numReviews + " avaliações");
-                        txt_book_reviews_num_reviews.setText(((Integer)numReviews).toString());
-
                     } catch (JSONException e) {
                         e.printStackTrace();
                         txt_avaliacao.setText("Avaliar este livro");
@@ -271,6 +259,43 @@ public class BookFragment extends BaseFragment {
                         txt_new_review.setText("ESCREVA UMA RESENHA");
                         commentHTTPMethod = "post";
                     }
+                    try {
+                        JSONArray jsonArrayBookReviewStats = root.getJSONArray("stats");
+                        JSONObject jsonBookReviewStats = jsonArrayBookReviewStats.getJSONObject(0);
+                        bookRating = jsonBookReviewStats.getDouble("bookRating");
+                        numReviews = jsonBookReviewStats.getInt("numReviews");
+                        NumberFormat formatarFloat = new DecimalFormat("0.0");
+                        txt_book_rating.setText(formatarFloat.format(bookRating).replace(".", ","));
+                        txt_book_review_rating.setText(formatarFloat.format(bookRating).replace(".", ","));
+                        book_review_rating.setRating((float) bookRating);
+                        txt_book_num_reviews.setText(numReviews + " avaliações");
+                        txt_book_reviews_num_reviews.setText(((Integer) numReviews).toString());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        mUserNames.clear();
+                        mReviews.clear();
+                        JSONArray jsonArrayBookAllReviews = root.getJSONArray("reviews");
+                        for (int i = 0; i < Math.min(jsonArrayBookAllReviews.length(), 3); i++) {
+                            JSONObject jsonBookAllReviews = jsonArrayBookAllReviews.getJSONObject(i);
+                            if (!jsonBookAllReviews.optString("review").equals("")) {
+                                mUserNames.add(jsonBookAllReviews.optString("userName"));
+                                Review r = new Review();
+                                r.setUserId(jsonBookAllReviews.optInt("userId"));
+                                r.setBookId(jsonBookAllReviews.optInt("bookId"));
+                                r.setRating(jsonBookAllReviews.optInt("rating"));
+                                r.setReview(jsonBookAllReviews.optString("review"));
+                                r.setUpdatedAt(jsonBookAllReviews.optString("updatedAt"));
+                                mReviews.add(r);
+                            }
+                        }
+                        //Carrega os comentários da parte de "Avaliações e resenhas" no RecyclerView
+                        initRecyclerView(commentsRecyclerView);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
                 } else {
                     Toast.makeText(context,"Não foi possível carregar os dados da sua avaliação do livro",Toast.LENGTH_SHORT).show();
                 }
@@ -284,12 +309,29 @@ public class BookFragment extends BaseFragment {
             }
         });
 
+        //Carrega a tela com todas as reviews do livro
+        all_reviews = view.findViewById(R.id.fr_book_all_reviews);
+        all_reviews.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Fragment myFragment = new AllCommentsFragment();
+                myFragment.setArguments(params);
+                FragmentManager fm = getFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+                ft.replace(R.id.containerHome, myFragment);
+                ft.addToBackStack(null);
+                ft.commit();
+            }
+        });
+
         //Carrega a tela onde o usuário escreve uma review e deixa uma nota para o livro
         txt_new_review.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 params.putFloat("userRating", userRating);
                 params.putString("commentHTTPMethod", commentHTTPMethod);
+                params.putString("userReview", myReview.getReview());
                 Fragment myFragment = new NewReviewFragment();
                 myFragment.setArguments(params);
                 FragmentManager fm = getFragmentManager();
@@ -307,6 +349,7 @@ public class BookFragment extends BaseFragment {
                     userRating = rating;
                     params.putFloat("userRating", userRating);
                     params.putString("commentHTTPMethod", commentHTTPMethod);
+                    params.putString("userReview", myReview.getReview());
                     Fragment myFragment = new NewReviewFragment();
                     myFragment.setArguments(params);
                     FragmentManager fm = getFragmentManager();
@@ -347,40 +390,40 @@ public class BookFragment extends BaseFragment {
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-    private void getRatings() {
-        mUserNames.add("User1");
-        mUserImageUrls.add("https://images-eds-ssl.xboxlive.com/image?url=8Oaj9Ryq1G1_p3lLnXlsaZgGzAie6Mnu24_PawYuDYIoH77pJ.X5Z.MqQPibUVTcS9jr0n8i7LY1tL3U7AiafeupMTZQuDOSyxGOvIx91kUec.3ySDDfcb5rOW0cxonX&format=jpg&h=253&w=253");
-        mRatings.add(4);
-        mRatingDates.add("12/06/2019");
-        mComments.add("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod " +
-                "tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, " +
-                "quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. " +
-                "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu " +
-                "fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in " +
-                "culpa qui officia deserunt mollit anim id est laborum.");
-
-        mUserNames.add("User2");
-        mUserImageUrls.add("https://images-eds-ssl.xboxlive.com/image?url=8Oaj9Ryq1G1_p3lLnXlsaZgGzAie6Mnu24_PawYuDYIoH77pJ.X5Z.MqQPibUVTcS9jr0n8i7LY1tL3U7AiafSwJmHWPM6ACTB2wtC7kVEJ2Fdtsnst9_4aGOnnc7Cpc&format=jpg&h=253&w=253");
-        mRatings.add(5);
-        mRatingDates.add("12/06/2019");
-        mComments.add("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod " +
-                "tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, " +
-                "quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. " +
-                "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu " +
-                "fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in " +
-                "culpa qui officia deserunt mollit anim id est laborum.");
-
-        mUserNames.add("User3");
-        mUserImageUrls.add("https://images-eds-ssl.xboxlive.com/image?url=8Oaj9Ryq1G1_p3lLnXlsaZgGzAie6Mnu24_PawYuDYIoH77pJ.X5Z.MqQPibUVTcS9jr0n8i7LY1tL3U7Aiaff9fXwZrQpVVndgZJjXjfSUo3nR1fjth9UJh_XO0U7lH&format=jpg&h=253&w=253");
-        mRatings.add(3);
-        mRatingDates.add("12/06/2019");
-        mComments.add("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod " +
-                "tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, " +
-                "quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. " +
-                "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu " +
-                "fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in " +
-                "culpa qui officia deserunt mollit anim id est laborum.");
-    }
+//    private void getRatings() {
+//        mUserNames.add("User1");
+//        mUserImageUrls.add("https://images-eds-ssl.xboxlive.com/image?url=8Oaj9Ryq1G1_p3lLnXlsaZgGzAie6Mnu24_PawYuDYIoH77pJ.X5Z.MqQPibUVTcS9jr0n8i7LY1tL3U7AiafeupMTZQuDOSyxGOvIx91kUec.3ySDDfcb5rOW0cxonX&format=jpg&h=253&w=253");
+//        mRatings.add(4);
+//        mRatingDates.add("12/06/2019");
+//        mComments.add("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod " +
+//                "tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, " +
+//                "quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. " +
+//                "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu " +
+//                "fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in " +
+//                "culpa qui officia deserunt mollit anim id est laborum.");
+//
+//        mUserNames.add("User2");
+//        mUserImageUrls.add("https://images-eds-ssl.xboxlive.com/image?url=8Oaj9Ryq1G1_p3lLnXlsaZgGzAie6Mnu24_PawYuDYIoH77pJ.X5Z.MqQPibUVTcS9jr0n8i7LY1tL3U7AiafSwJmHWPM6ACTB2wtC7kVEJ2Fdtsnst9_4aGOnnc7Cpc&format=jpg&h=253&w=253");
+//        mRatings.add(5);
+//        mRatingDates.add("12/06/2019");
+//        mComments.add("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod " +
+//                "tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, " +
+//                "quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. " +
+//                "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu " +
+//                "fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in " +
+//                "culpa qui officia deserunt mollit anim id est laborum.");
+//
+//        mUserNames.add("User3");
+//        mUserImageUrls.add("https://images-eds-ssl.xboxlive.com/image?url=8Oaj9Ryq1G1_p3lLnXlsaZgGzAie6Mnu24_PawYuDYIoH77pJ.X5Z.MqQPibUVTcS9jr0n8i7LY1tL3U7Aiaff9fXwZrQpVVndgZJjXjfSUo3nR1fjth9UJh_XO0U7lH&format=jpg&h=253&w=253");
+//        mRatings.add(3);
+//        mRatingDates.add("12/06/2019");
+//        mComments.add("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod " +
+//                "tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, " +
+//                "quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. " +
+//                "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu " +
+//                "fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in " +
+//                "culpa qui officia deserunt mollit anim id est laborum.");
+//    }
 
     private String getDevolutuionDate() {
         SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
@@ -395,7 +438,19 @@ public class BookFragment extends BaseFragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
         CommentRecyclerViewAdapter adapter = new CommentRecyclerViewAdapter(context, mUserNames, mUserImageUrls,
-                mRatings, mRatingDates, mComments);
+                mReviews);
         recyclerView.setAdapter(adapter);
+    }
+
+    private String formataData(String data) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+        SimpleDateFormat brdf = new SimpleDateFormat("dd/MM/yyyy");
+        Calendar c = Calendar.getInstance();
+        try {
+            c.setTime(sdf.parse(data));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return brdf.format(c.getTime());
     }
 }

@@ -21,28 +21,14 @@ import java.util.Calendar;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecyclerViewAdapter.ViewHolder> {
+public class AllCommentsRecyclerViewAdapter extends RecyclerView.Adapter<AllCommentsRecyclerViewAdapter.ViewHolder> {
 
     private ArrayList<String> mUserNames;
     private ArrayList<String> mUserImageUrls;
-//    private ArrayList<Integer> mRatings;
-//    private ArrayList<String> mRatingDates;
-//    private ArrayList<String> mComments;
     private ArrayList<Review> mReviews;
     private Context mContext;
 
-//    public CommentRecyclerViewAdapter(Context mContext, ArrayList<String> mUserNames,
-//                                      ArrayList<String> mUserImageUrls, ArrayList<Integer> mRatings,
-//                                      ArrayList<String> mRatingDates, ArrayList<String> mComments) {
-//        this.mUserNames = mUserNames;
-//        this.mUserImageUrls = mUserImageUrls;
-//        this.mRatings = mRatings;
-//        this.mRatingDates = mRatingDates;
-//        this.mComments = mComments;
-//        this.mContext = mContext;
-//    }
-
-    public CommentRecyclerViewAdapter(Context mContext, ArrayList<String> mUserNames,
+    public AllCommentsRecyclerViewAdapter(Context mContext, ArrayList<String> mUserNames,
                                       ArrayList<String> mUserImageUrls, ArrayList<Review> mReviews) {
         this.mUserNames = mUserNames;
         this.mUserImageUrls = mUserImageUrls;
@@ -53,7 +39,7 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecy
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_comment, viewGroup, false);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_all_comments, viewGroup, false);
         return new ViewHolder(view);
     }
 
@@ -97,12 +83,12 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecy
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            this.username = itemView.findViewById(R.id.comment_book_username);
-            this.profile_image = itemView.findViewById(R.id.comment_book_profile_image);
-            this.rating = itemView.findViewById(R.id.comment_book_rating);
-            this.data_rating = itemView.findViewById(R.id.comment_book_data_rating);
-            this.comment = itemView.findViewById(R.id.comment_book_comment);
-            this.parentLayout = itemView.findViewById(R.id.comment_book_parent_layout);
+            this.username = itemView.findViewById(R.id.comment_all_book_username);
+            this.profile_image = itemView.findViewById(R.id.comment_all_book_profile_image);
+            this.rating = itemView.findViewById(R.id.comment_all_book_rating);
+            this.data_rating = itemView.findViewById(R.id.comment_all_book_data_rating);
+            this.comment = itemView.findViewById(R.id.comment_all_book_comment);
+            this.parentLayout = itemView.findViewById(R.id.comment_all_book_parent_layout);
         }
     }
 
@@ -118,3 +104,4 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecy
         return brdf.format(c.getTime());
     }
 }
+

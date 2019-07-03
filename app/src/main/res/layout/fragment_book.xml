@@ -206,6 +206,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/fr_book_all_reviews"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -221,7 +222,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingHorizontal="20dp">
+                android:paddingHorizontal="20dp"
+                android:layout_marginBottom="20dp">
 
                 <TextView
                     android:id="@+id/fr_book_book_review_rating"
@@ -258,7 +260,7 @@
                 android:id="@+id/fr_book_recyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical"></android.support.v7.widget.RecyclerView>
+                android:orientation="vertical"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

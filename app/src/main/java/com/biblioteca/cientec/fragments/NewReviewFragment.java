@@ -37,9 +37,11 @@ public class NewReviewFragment extends BaseFragment {
     private Bundle params;
     private Book book;
     private float userRating;
+    private String userReview;
     private RatingBar review_rating;
     private TextInputLayout txt_review;
     private Button btn_postar;
+    private Button btn_delete;
     private ProgressDialog dialog;
     private String commentHTTPMethod;
 
@@ -62,6 +64,8 @@ public class NewReviewFragment extends BaseFragment {
         commentHTTPMethod = params.getString("commentHTTPMethod");
         params.remove("commentHTTPMethod");
         Toast.makeText(context, "commentHTTPMethod: "+commentHTTPMethod, Toast.LENGTH_SHORT).show();
+        userReview = params.getString("userReview");
+        params.remove("userReview");
 
         //Volta o título e o subtítulo da Actionbar para seus valores iniciais
         ((HomeActivity)getActivity()).getSupportActionBar().setTitle(R.string.app_name);
@@ -74,6 +78,7 @@ public class NewReviewFragment extends BaseFragment {
         review_rating = view.findViewById(R.id.fr_new_review_rating);
         review_rating.setRating(userRating);
         txt_review = view.findViewById(R.id.fr_new_review_review);
+        txt_review.getEditText().setText(userReview);
         btn_postar = view.findViewById(R.id.fr_new_review_post);
         btn_postar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -121,8 +126,83 @@ public class NewReviewFragment extends BaseFragment {
                         }
                     });
                 } else if (commentHTTPMethod.equals("put")) {
+                    Call<String> stringCall = service.putMyReview(
+                            "Bearer " + user.getToken(),
+                            book.getId(), txt_review.getEditText().getText().toString(),
+                            (int) review_rating.getRating()
+                    );
+                    stringCall.enqueue(new Callback<String>() {
+                        @Override
+                        public void onResponse(Call<String> call, Response<String> response) {
+                            if (response.isSuccessful()) {
+                                String responseString = response.body();
 
+                                Toast.makeText(getActivity().getApplicationContext(), "Avaliação publicada com sucesso", Toast.LENGTH_SHORT).show();
+                                getActivity().onBackPressed();
+                            } else {
+                                Toast.makeText(getActivity().getApplicationContext(), "Não foi possível publicar a avaliação", Toast.LENGTH_SHORT).show();
+                            }
+                            dialog.dismiss();
+                            btn_postar.setEnabled(true);
+                        }
+
+                        @Override
+                        public void onFailure(Call<String> call, Throwable t) {
+                            dialog.dismiss();
+                            Toast.makeText(getActivity().getApplicationContext(), "Não foi possível publicar a avaliação", Toast.LENGTH_SHORT).show();
+                            btn_postar.setEnabled(true);
+                        }
+                    });
                 }
+            }
+        });
+
+        btn_delete = view.findViewById(R.id.fr_new_review_delete);
+        if (commentHTTPMethod.equals("post")) {
+            btn_delete.setVisibility(View.GONE);
+        }
+        btn_delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                btn_delete.setEnabled(false);
+
+                dialog = new ProgressDialog(context);
+                dialog.setTitle("");
+                dialog.setMessage("Excluindo avaliação...");
+                dialog.show();
+
+                Retrofit retrofit = new Retrofit.Builder()
+                        .addConverterFactory(ScalarsConverterFactory.create())
+                        .baseUrl(BibliotecaCientecAPIService.BASE_URL)
+                        .build();
+
+                BibliotecaCientecAPIService service = retrofit.create(BibliotecaCientecAPIService.class);
+                Call<String> stringCall = service.deleteMyReview(
+                        "Bearer " + user.getToken(),
+                        book.getId()
+                );
+                stringCall.enqueue(new Callback<String>() {
+                    @Override
+                    public void onResponse(Call<String> call, Response<String> response) {
+                        if (response.isSuccessful()) {
+                            String responseString = response.body();
+
+                            Toast.makeText(getActivity().getApplicationContext(), "Avaliação excluida com sucesso", Toast.LENGTH_SHORT).show();
+                            getActivity().onBackPressed();
+                        } else {
+                            Toast.makeText(getActivity().getApplicationContext(), "Não foi possível excluir a avaliação", Toast.LENGTH_SHORT).show();
+                        }
+                        dialog.dismiss();
+                        btn_delete.setEnabled(true);
+                    }
+
+                    @Override
+                    public void onFailure(Call<String> call, Throwable t) {
+                        dialog.dismiss();
+                        Toast.makeText(getActivity().getApplicationContext(), "Não foi possível excluir a avaliação", Toast.LENGTH_SHORT).show();
+                        btn_delete.setEnabled(true);
+                    }
+                });
             }
         });
 

@@ -38,10 +38,14 @@ public class HomeFragment extends BaseFragment {
     private View view;
     private Context context;
     private Intent it;
-    private ArrayList<Book> mBooks = new ArrayList<>();
-    private ArrayList<Author> mAuthors = new ArrayList<>();
-    private ArrayList<String> mNames = new ArrayList<>();
-    private ArrayList<String> mImageUrls = new ArrayList<>();
+    private ArrayList<Book> mBooks0 = new ArrayList<>();
+    private ArrayList<Author> mAuthors0 = new ArrayList<>();
+    private ArrayList<Book> mBooks1 = new ArrayList<>();
+    private ArrayList<Author> mAuthors1 = new ArrayList<>();
+    private ArrayList<Book> mBooks2 = new ArrayList<>();
+    private ArrayList<Author> mAuthors2 = new ArrayList<>();
+    //private ArrayList<String> mNames = new ArrayList<>();
+    //private ArrayList<String> mImageUrls = new ArrayList<>();
     private User user;
 
     @Override
@@ -89,7 +93,8 @@ public class HomeFragment extends BaseFragment {
                 .build();
 
         BibliotecaCientecAPIService service = retrofit.create(BibliotecaCientecAPIService.class);
-        Call<String> stringCall = service.getBooks("Bearer "+user.getToken());
+        // Card view da categoria0
+        Call<String> stringCall = service.getRecentBooks("Bearer "+user.getToken());
         stringCall.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
@@ -99,8 +104,8 @@ public class HomeFragment extends BaseFragment {
                     JSONArray root = null;
                     try {
                         root = new JSONArray(responseString);
-                        mBooks.clear();
-                        mAuthors.clear();
+                        mBooks0.clear();
+                        mAuthors0.clear();
                         for (int i = 0; i < root.length(); i++) {
                             JSONObject jsonBook = root.getJSONObject(i);
                             Book b = new Book();
@@ -116,17 +121,127 @@ public class HomeFragment extends BaseFragment {
                             b.setAuthorId(jsonBook.optString("authorId"));
                             b.setNumberOfPages(jsonBook.optInt("numberOfPages"));
                             b.setLanguage(jsonBook.optString("language"));
-                            mBooks.add(b);
+                            mBooks0.add(b);
                             Author a = new Author();
                             a.setId(jsonBook.optInt("authorId"));
                             a.setName(jsonBook.optString("authorName"));
                             a.setAbout(jsonBook.optString("authorAbout"));
-                            mAuthors.add(a);
+                            mAuthors0.add(a);
                             Log.d("Author", "id: "+a.getId()+" name: "+a.getName()+" about: "+a.getAbout());
                         }
 
-                        RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
-                        initRecyclerView(recyclerView);
+                        RecyclerView recyclerView = view.findViewById(R.id.recyclerView0);
+                        initRecyclerView0(recyclerView);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Toast.makeText(context,"Não foi possível carregar os dados",Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Toast.makeText(context,
+                        "Não foi possível carregar os dados. Verifique sua conexão",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Card view da categoria1
+        stringCall = service.getPopularBooks("Bearer "+user.getToken());
+        stringCall.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (response.isSuccessful()) {
+                    String responseString = response.body();
+                    Log.d("Author", "res: "+responseString);
+                    JSONArray root = null;
+                    try {
+                        root = new JSONArray(responseString);
+                        mBooks1.clear();
+                        mAuthors1.clear();
+                        for (int i = 0; i < root.length(); i++) {
+                            JSONObject jsonBook = root.getJSONObject(i);
+                            Book b = new Book();
+                            b.setId(jsonBook.optInt("bookId"));
+                            b.setIsbn(jsonBook.optString("isbn"));
+                            b.setTitle(jsonBook.optString("title"));
+                            b.setOriginalTile(jsonBook.optString("originalTitle"));
+                            b.setEdition(jsonBook.optInt("edition"));
+                            b.setPublisher(jsonBook.optString("publisher"));
+                            b.setCoverUrl(jsonBook.optString("coverUrl").replace("localhost", "10.0.2.2"));
+                            b.setCoverName(jsonBook.optString("coverName"));
+                            b.setDescription(jsonBook.optString("description"));
+                            b.setAuthorId(jsonBook.optString("authorId"));
+                            b.setNumberOfPages(jsonBook.optInt("numberOfPages"));
+                            b.setLanguage(jsonBook.optString("language"));
+                            mBooks1.add(b);
+                            Author a = new Author();
+                            a.setId(jsonBook.optInt("authorId"));
+                            a.setName(jsonBook.optString("authorName"));
+                            a.setAbout(jsonBook.optString("authorAbout"));
+                            mAuthors1.add(a);
+                            Log.d("Author", "id: "+a.getId()+" name: "+a.getName()+" about: "+a.getAbout());
+                        }
+
+                        RecyclerView recyclerView = view.findViewById(R.id.recyclerView1);
+                        initRecyclerView1(recyclerView);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Toast.makeText(context,"Não foi possível carregar os dados",Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Toast.makeText(context,
+                        "Não foi possível carregar os dados. Verifique sua conexão",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Card view da categoria2
+        stringCall = service.getBestRatedBooks("Bearer "+user.getToken());
+        stringCall.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (response.isSuccessful()) {
+                    String responseString = response.body();
+                    Log.d("Author", "res: "+responseString);
+                    JSONArray root = null;
+                    try {
+                        root = new JSONArray(responseString);
+                        mBooks2.clear();
+                        mAuthors2.clear();
+                        for (int i = 0; i < root.length(); i++) {
+                            JSONObject jsonBook = root.getJSONObject(i);
+                            Book b = new Book();
+                            b.setId(jsonBook.optInt("bookId"));
+                            b.setIsbn(jsonBook.optString("isbn"));
+                            b.setTitle(jsonBook.optString("title"));
+                            b.setOriginalTile(jsonBook.optString("originalTitle"));
+                            b.setEdition(jsonBook.optInt("edition"));
+                            b.setPublisher(jsonBook.optString("publisher"));
+                            b.setCoverUrl(jsonBook.optString("coverUrl").replace("localhost", "10.0.2.2"));
+                            b.setCoverName(jsonBook.optString("coverName"));
+                            b.setDescription(jsonBook.optString("description"));
+                            b.setAuthorId(jsonBook.optString("authorId"));
+                            b.setNumberOfPages(jsonBook.optInt("numberOfPages"));
+                            b.setLanguage(jsonBook.optString("language"));
+                            mBooks2.add(b);
+                            Author a = new Author();
+                            a.setId(jsonBook.optInt("authorId"));
+                            a.setName(jsonBook.optString("authorName"));
+                            a.setAbout(jsonBook.optString("authorAbout"));
+                            mAuthors2.add(a);
+                            Log.d("Author", "id: "+a.getId()+" name: "+a.getName()+" about: "+a.getAbout());
+                        }
+
+                        RecyclerView recyclerView = view.findViewById(R.id.recyclerView2);
+                        initRecyclerView2(recyclerView);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -164,52 +279,66 @@ public class HomeFragment extends BaseFragment {
         super.onAttach(context);
     }
 
-    private void getImages() {
-        mImageUrls.add("https://statics.livrariacultura.net.br/products/capas/102/42865102.jpg");
-        mNames.add("Sapiens - Uma Breve História da Humanidade");
+//    private void getImages() {
+//        mImageUrls.add("https://statics.livrariacultura.net.br/products/capas/102/42865102.jpg");
+//        mNames.add("Sapiens - Uma Breve História da Humanidade");
+//
+//        mImageUrls.add("https://statics.livrariacultura.net.br/products/capas/354/1692354.jpg");
+//        mNames.add("O Conto da Aia");
+//
+//        mImageUrls.add("https://statics.livrariacultura.net.br/products/capas/877/1831877.jpg");
+//        mNames.add("A Revolução dos Bichos");
+//
+//        mImageUrls.add("https://statics.livrariacultura.net.br/products/capas/750/2823750.jpg");
+//        mNames.add("1984");
+//
+//        mImageUrls.add("https://statics.livrariacultura.net.br/products/capas/090/2011319090.jpg");
+//        mNames.add("O Espadachim de Carvao");
+//
+//        mImageUrls.add("https://statics.livrariacultura.net.br/products/capas/877/22137877.jpg");
+//        mNames.add("A Batalha do Apocalipse: da Queda dos Anjos ao Crepúsculo do Mundo");
+//
+//        mImageUrls.add("https://statics.livrariacultura.net.br/products/capas/272/2011573272.jpg");
+//        mNames.add("O Ultimo Reino - Cronicas Saxonicas - Vol. 1");
+//
+//        mImageUrls.add("https://statics.livrariacultura.net.br/products/capas/671/30142671.jpg");
+//        mNames.add("Rápido e Devagar");
+//
+//        mImageUrls.add("https://statics.livrariacultura.net.br/products/capas/846/37019846.jpg");
+//        mNames.add("Androides Sonham Com Ovelhas Elétricas?");
+//
+//        mImageUrls.add("https://statics.livrariacultura.net.br/products/capas/426/42747426.jpg");
+//        mNames.add("Eu, Robo");
+//
+//        mImageUrls.add("https://statics.livrariacultura.net.br/products/capas/992/23052992.jpg");
+//        mNames.add("Jurassic Park");
+//
+//        mImageUrls.add("https://statics.livrariacultura.net.br/products/capas/860/23052860.jpg");
+//        mNames.add("O Planeta dos Macacos");
+//
+//        mImageUrls.add("https://statics.livrariacultura.net.br/products/capas/016/3152016.jpg");
+//        mNames.add("Laranja Mecânica");
+//
+//    }
 
-        mImageUrls.add("https://statics.livrariacultura.net.br/products/capas/354/1692354.jpg");
-        mNames.add("O Conto da Aia");
-
-        mImageUrls.add("https://statics.livrariacultura.net.br/products/capas/877/1831877.jpg");
-        mNames.add("A Revolução dos Bichos");
-
-        mImageUrls.add("https://statics.livrariacultura.net.br/products/capas/750/2823750.jpg");
-        mNames.add("1984");
-
-        mImageUrls.add("https://statics.livrariacultura.net.br/products/capas/090/2011319090.jpg");
-        mNames.add("O Espadachim de Carvao");
-
-        mImageUrls.add("https://statics.livrariacultura.net.br/products/capas/877/22137877.jpg");
-        mNames.add("A Batalha do Apocalipse: da Queda dos Anjos ao Crepúsculo do Mundo");
-
-        mImageUrls.add("https://statics.livrariacultura.net.br/products/capas/272/2011573272.jpg");
-        mNames.add("O Ultimo Reino - Cronicas Saxonicas - Vol. 1");
-
-        mImageUrls.add("https://statics.livrariacultura.net.br/products/capas/671/30142671.jpg");
-        mNames.add("Rápido e Devagar");
-
-        mImageUrls.add("https://statics.livrariacultura.net.br/products/capas/846/37019846.jpg");
-        mNames.add("Androides Sonham Com Ovelhas Elétricas?");
-
-        mImageUrls.add("https://statics.livrariacultura.net.br/products/capas/426/42747426.jpg");
-        mNames.add("Eu, Robo");
-
-        mImageUrls.add("https://statics.livrariacultura.net.br/products/capas/992/23052992.jpg");
-        mNames.add("Jurassic Park");
-
-        mImageUrls.add("https://statics.livrariacultura.net.br/products/capas/860/23052860.jpg");
-        mNames.add("O Planeta dos Macacos");
-
-        mImageUrls.add("https://statics.livrariacultura.net.br/products/capas/016/3152016.jpg");
-        mNames.add("Laranja Mecânica");
-
-    }
-
-    private void initRecyclerView(RecyclerView recyclerView) {
+    private void initRecyclerView0(RecyclerView recyclerView) {
         LinearLayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
         recyclerView.setLayoutManager(layoutManager);
-        BookRecyclerViewAdapter adapter = new BookRecyclerViewAdapter(context, /*mNames, mImageUrls*/ mBooks, mAuthors, user);
+        BookRecyclerViewAdapter adapter = new BookRecyclerViewAdapter(context, /*mNames, mImageUrls*/ mBooks0, mAuthors0, user);
+        recyclerView.setAdapter(adapter);
+    }
+
+    private void initRecyclerView1(RecyclerView recyclerView) {
+        LinearLayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+        recyclerView.setLayoutManager(layoutManager);
+        BookRecyclerViewAdapter adapter = new BookRecyclerViewAdapter(context, /*mNames, mImageUrls*/ mBooks1, mAuthors1, user);
+        recyclerView.setAdapter(adapter);
+    }
+
+    private void initRecyclerView2(RecyclerView recyclerView) {
+        LinearLayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+        recyclerView.setLayoutManager(layoutManager);
+        BookRecyclerViewAdapter adapter = new BookRecyclerViewAdapter(context, /*mNames, mImageUrls*/ mBooks2, mAuthors2, user);
         recyclerView.setAdapter(adapter);
     }
 }
